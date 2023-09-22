@@ -26,6 +26,7 @@ import { Footer } from './components/Footer/Footer'
 import { FormularioTareas } from './components/FormularioTareas/FormularioTareas'
 import { TarjetaTareas } from './components/TarjetaTareas.jsx/TarjetaTareas'
 import { tareaReducer } from './reducers/tareaReducer'
+import Swal from 'sweetalert2'
 // import './style.css'
 
 
@@ -46,12 +47,12 @@ export const App = () => {
   const handleInputChange = (e) => {
       // obtener el valor de los cambios que se van aplicando y guardarlos en el set
       setDescripcion(e.target.value)
-      console.log(descripcion)
+      // console.log(descripcion)
   }
   const handleSubmit = (e) =>{
       // evitar que se recarge la pagina
       e.preventDefault();
-
+    if(descripcion != ""){
       const tareaNueva = {
         // para agregar un nuevo id usamos el metodo date por tiempo
         // hay otra forma de agregar id por medio de la libreria uuid, que es lo que ortoga id a nivel mundial
@@ -68,6 +69,14 @@ export const App = () => {
       dispatch(accion)
 
       setDescripcion("")
+    }else{
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Los campos estan vacios',
+        // footer: '<a href="">Why do I have this issue?</a>'
+      })
+    }
   }
   // useEffect()
   // vamos a ejecutar algo que cambia
@@ -81,9 +90,26 @@ export const App = () => {
   }
 
   const handleEliminar = (id) => {
-    dispatch({
-      type: "borrar",
-      payload: id
+    Swal.fire({
+      title: 'Seguro?',
+      text: "ya borrado ya no se recuperara",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, borrar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        dispatch({
+          type: "borrar",
+          payload: id
+        })
+        Swal.fire(
+          'Eliminado',
+          'el registro ha sido eliminado',
+          'success'
+        )
+      }
     })
   }
 
